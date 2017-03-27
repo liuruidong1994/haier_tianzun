@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>test</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+    <!-- <link rel="stylesheet" type="text/css" href="css/dropzone.css"> -->
+</head>
+<body>
+
+<div id="container"></div>
+<div id="stats"></div>
+<div class="play">
+    <a id='play'>
+        <img class="ring" src="/static/textures/ring.png">
+        <img class="play-icon" src="/static/textures/play.png">
+    </a>
+</div>
+
+<!-- 		<div id="uploader-demo" style="position: absolute;z-index: 9999999;left: 72%;top: 71%;">
+		    <div id="fileList" class="uploader-list"></div>
+		    <div id="filePicker">选择图片</div>
+		</div> -->
+
+<img id="upload-img" src="" height="440" width="220">
+
+<div id="illdesign">
+    <a>
+        <input type="file" id="upload-image"><br>
+    </a>
+</div>
+
+<div id="like-thumb">
+    <a id="like">
+    </a>
+</div>
+
+<div id="rank-button">
+    <a id="rank">
+    </a>
+</div>
+
+<div id="design-too">
+    <a id="designtoo">
+    </a>
+</div>
+
+<div id="reupload">
+    <a>
+        <input type="file" id="reupload-image"><br>
+    </a>
+</div>
+
+<div id="confirm">
+    <a id="confirm-image">
+    </a>
+</div>
+
+<div id="info">
+    <a href="#">
+        <img src="/static/textures/logo.png">
+    </a>
+</div>
+
+
+
+<!--<script>
+    //@lrd
+    var userInfo=<?php echo json_encode($userInfo)?>;
+    var isAnimVisible=<?php echo $isAnimVisible?>;
+    var isDetail=<?php echo $isDetail?>;
+    var isMine=<?php echo $isMine?>;
+    var projectInfo=<?php echo json_encode($projectInfo)?>;//详情页信息
+    var rankingList=<?php echo json_encode($rankingList)?>;//
+</script>-->
+
+
+<script>
+
+    //@lrd
+    //假数据
+
+    //当前登录用户信息
+    var userInfo={"id":"oFZwDt4CRPKHbDUX-FETZGGm5QDY","name":"Reader","nickname":"Reader","avatar":"http:\/\/wx.qlogo.cn\/mmopen\/PiajxSqBRaEJj5SaE2vj4FZP486EdXw8GX4qDRribws3dE2DeYHIX2w0iaLNyOrxLHeW0frTkcia5vKfBpeSSFk8MQ\/0","email":null,"original":{"openid":"oFZwDt4CRPKHbDUX-FETZGGm5QDY","nickname":"Reader","sex":1,"language":"zh_CN","city":"\u9752\u5c9b","province":"\u5c71\u4e1c","country":"\u4e2d\u56fd","headimgurl":"http:\/\/wx.qlogo.cn\/mmopen\/PiajxSqBRaEJj5SaE2vj4FZP486EdXw8GX4qDRribws3dE2DeYHIX2w0iaLNyOrxLHeW0frTkcia5vKfBpeSSFk8MQ\/0","privilege":[]},"token":"k2Hx2Pyh-T3ln8UxgTN6GP3heXmtKDiWphod2KpiFVbBGDYcK8-ApzecxUDFkAgEPdWW9JRR_KIJQTQbMmTtqRHTt0mX2OdHuzyYTTw5cZY"};
+    //是否播放动画
+    var isAnimVisible=0;
+    //是否直接展示详情页
+    var isDetail=1;
+    //是我的详情页还是别人的详情页
+    var isMine=1;
+    //详情页信息
+    var projectInfo={"id":1,"open_id":"oFZwDt4CRPKHbDUX-FETZGGm5QDY","nickname":"Reader","head_img":"http:\/\/wx.qlogo.cn\/mmopen\/PiajxSqBRaEJj5SaE2vj4FZP486EdXw8GX4qDRribws3dE2DeYHIX2w0iaLNyOrxLHeW0frTkcia5vKfBpeSSFk8MQ\/0","img_url":"http:\/\/qdredsoft.b0.upaiyun.com\/haier_tianzun\/productions\/oFZwDt4CRPKHbDUX-FETZGGm5QDY","zan_num":0,"create_date":"2017-03-25 10:56:57","create_time":1490410617};//详情页信息
+    //排行榜信息
+    var rankingList=[{"id":1,"open_id":"oFZwDt4CRPKHbDUX-FETZGGm5QDY","nickname":"Reader","head_img":"http:\/\/wx.qlogo.cn\/mmopen\/PiajxSqBRaEJj5SaE2vj4FZP486EdXw8GX4qDRribws3dE2DeYHIX2w0iaLNyOrxLHeW0frTkcia5vKfBpeSSFk8MQ\/0","img_url":"http:\/\/qdredsoft.b0.upaiyun.com\/haier_tianzun\/productions\/oFZwDt4CRPKHbDUX-FETZGGm5QDY","zan_num":0,"create_date":"2017-03-25 10:56:57","create_time":1490410617}];//
+</script>
+
+
+
+<!-- <script src="js/underscore-min.js"></script> -->
+<!-- <script src="js/dropzone.js"></script> -->
+<script src="/static/js/jquery.js"></script>
+<script>
+    (function() {
+        "use strict";
+        window.addEventListener('load', function() {
+
+            var fakedata = [];
+
+            for (var i = 0; i < 5; i++) {
+                fakedata[i] = {
+                    name: 'img ' + i,
+                    data: 'data:image/png;base64,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',
+                    likes: 20000,
+                    rank: 1,
+                    head: 'head'
+                };
+            }
+
+            var stats;
+
+            function initStats() {
+                stats = new Stats();
+                stats.domElement.style.position = 'absolute';
+                stats.domElement.style.left = '10px';
+                stats.domElement.style.top = '10px';
+                document.getElementById('stats').appendChild(stats.domElement);
+            }
+
+
+            // upload files or image s
+            var file, reader;
+
+            var upload = document.getElementById( 'illdesign' );
+
+            upload.onchange = function (event){
+
+                var preview = document.getElementById('upload-img'); //selects the query named img
+                preview.style.display = 'block';
+                upload.style.display = 'none';
+                reupload.style.display = 'block';
+                document.getElementById('confirm').style.display = 'block';
+
+                scene.getObjectByName('reupload').visible = true;
+                scene.getObjectByName('confirm').visible = true;
+                scene.getObjectByName('illdesign').visible = false;
+
+                file    = document.getElementById('upload-image').files[0]; //sames as here
+                reader  = new FileReader();
+
+                reader.onloadend = function () {
+                    preview.src = reader.result;
+                }
+
+                if (file) {
+                    reader.readAsDataURL(file); //reads the data as a URL
+                } else {
+                    preview.src = "";
+                }
+                console.log(reader);
+                console.log(file);
+            }
+
+            var reupload = document.getElementById( 'reupload' );
+
+            reupload.onchange = function (event){
+
+                var preview = document.getElementById('upload-img'); //selects the query named img
+                file    = document.getElementById('reupload-image').files[0]; //sames as here
+                reader  = new FileReader();
+
+                reader.onloadend = function () {
+                    preview.src = reader.result;
+                }
+
+                if (file) {
+                    reader.readAsDataURL(file); //reads the data as a URL
+                } else {
+                    preview.src = "";
+                }
+
+                console.log(file);
+            }
+
+            var confirm = document.getElementById( 'confirm-image' );
+
+            //@lrd
+            confirm.onclick = function (event){
+
+                // send file to server
+                //console.log(reader.result);
+                //@lrd
+                $.ajax({
+                    url:'http://jinbi.qdredsoft.com/index/index/upload',
+                    type:'post',
+                    data:{
+                        imgBase64:reader.result
+                    },
+                    success:function(res){
+                        if(res.code==200){
+
+
+                            // disappear button
+                            scene.getObjectByName('designtoo').visible = true;
+                            scene.getObjectByName('ranking').visible = true;
+                            scene.getObjectByName('likethumb').visible = true;
+
+                            scene.getObjectByName('reupload').visible = false;
+                            scene.getObjectByName('confirm').visible = false;
+
+                            document.getElementById('like-thumb').style.display = 'block';
+                            document.getElementById('rank-button').style.display = 'block';
+                            document.getElementById('design-too').style.display = 'block';
+
+                            document.getElementById('reupload-image').style.display = 'none';
+                            document.getElementById('confirm').style.display = 'none';
+
+                        }else{
+                            alert(res.msg);
+                        }
+                    },
+                    error:function(){
+                        alert('upload error')
+                    }
+                });
+
+
+                // draw another scene
+                // scene = {};
+                // drawLikePage();
+            };
+
+            var like = document.getElementById( 'like' );
+
+            //@lrd
+            like.onclick = function (event){
+
+                // hit like API
+                console.log('hit like');
+
+                // disappear button
+                $.ajax({
+                    url:'http://jinbi.qdredsoft.com/index/index/zan',
+                    type:'post',
+                    data:{
+                        id:projectInfo.id
+                    },
+                    success:function(res){
+                        if(res.code==200){
+                            alert('点赞成功');
+
+                        }else{
+                            alert(res.msg);
+                        }
+                    },
+                    error:function(){
+                        alert('zan error')
+                    }
+                });
+
+            };
+
+
+            var rank = document.getElementById( 'rank' );
+
+            rank.onclick = function (event){
+
+                // Nevegate to Rnaking page
+                console.log('hit rank');
+
+                // disappear button
+                document.getElementById('like-thumb').style.display = 'none';
+                document.getElementById('rank-button').style.display = 'none';
+                document.getElementById('design-too').style.display = 'none';
+                document.getElementById('upload-img').style.display = 'none';
+
+                goToRankPage();
+
+            };
+
+            var designtoo = document.getElementById( 'designtoo' );
+
+            designtoo.onclick = function (event){
+
+                // Nevegate to Rnaking page
+                console.log('design-too');
+
+                // disappear button
+
+
+            };
+
+
+            function goToRankPage() {
+                disappearElementRanking();
+                showRankingElement();
+            }
+
+            function disappearElementRanking() {
+                scene.getObjectByName('designtoo').visible = false;
+                scene.getObjectByName('ranking').visible = false;
+                scene.getObjectByName('likethumb').visible = false;
+
+                scene.getObjectByName('bottom').visible = false;
+                scene.getObjectByName('ac').visible = false;
+                scene.getObjectByName('illdesign').visible = false;
+                scene.getObjectByName('fakelight').visible = false;
+            }
+
+            function showRankingElement() {
+                drawingPlane( 600, 311, 'rankingbottom', 0, -270, -2947, .75 );
+                drawGroupElement( 414, 600, 'rankingAC', 0, -105, -2850, .55 );
+                drawGroupElement( 414, 600, 'rankingAC', -70, -95, -2860, .22 );
+                drawGroupElement( 414, 600, 'rankingAC', 72, -95, -2862, .22 );
+                drawGroupElement( 414, 600, 'rankingAC', 130, -105, -2855, .35 );
+                drawGroupElement( 414, 600, 'rankingAC', -130, -105, -2857, .35 );
+
+            }
+
+            function drawGroupElement (sizex, sizey, pngname, setx, sety, setz, scale, unvis) {
+                // var group = new THREE.Object3D();
+                geometry = new THREE.PlaneGeometry( sizex, sizey, 1, 1 );
+                texture = new THREE.TextureLoader().load( "textures/" + pngname + ".png" );
+                material = new THREE.MeshBasicMaterial({map:texture});
+
+                // image transparent without black background
+                material.transparent = true;
+
+                mesh = new THREE.Mesh( geometry, material );
+                mesh.position.set( setx, sety, setz);
+                mesh.scale.x = scale || 1;
+                mesh.scale.y = scale || 1;
+                mesh.scale.z = scale || 1;
+                mesh.position.set( setx, sety, setz);
+
+                // mesh.visible = false;
+
+                scene.add( mesh );
+
+                geometry = new THREE.PlaneGeometry( 200, 400, 1, 1 );
+                var tempImage = new Image();
+                tempImage.src = fakedata[0].data;
+                texture = new THREE.Texture();
+                texture.image = tempImage;
+                tempImage.onload = function(){
+                    texture.needsUpdate = true;
+                };
+
+                material = new THREE.MeshBasicMaterial({map:texture});
+                material.transparent = true;
+
+                mesh = new THREE.Mesh( geometry, material );
+
+                mesh.scale.x = scale || 1;
+                mesh.scale.y = scale || 1;
+                mesh.scale.z = scale || 1;
+                // group.add( mesh );
+
+                // if (unvis) {
+                // 	 group.visible = false;
+                // } else {
+                // 	group.visible = true;
+                // }
+
+                mesh.position.set( setx, sety, setz+1);
+                mesh.name = pngname;
+                scene.add( mesh );
+
+                // console.log(scene);
+            }
+
+
+
+            // controls = new THREE.DeviceOrientationControls( camera );
+
+            var container, camera, scene, renderer, controls, geometry, texture, material, mesh, light1, tmpObj;
+
+            // initialize parameters
+            var speed = 0;
+
+            var animate = function(){
+                // looping
+                requestAnimationFrame( animate );
+
+                speedControl(speed);
+                renderer.render(scene, camera);
+
+                // frame stats
+                stats.update();
+
+                //background
+                renderer.setClearColor (0xd2d2d2, 1);
+                watchCamera(camera.position);
+            };
+
+            // play
+            var play_button = document.getElementById( 'play' );
+            play_button.onclick = function(){
+                console.log('clicked');
+                play_button.style.display = 'none';
+
+                // set a timeout ready for start
+                setTimeout(function(){
+                    speed = 1;
+                }, 200);
+            };
+
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 500 );
+
+            // camera position
+            camera.position.x = 0;
+            camera.position.y = 0;
+
+            //@lrd
+            if(isAnimVisible){
+                camera.position.z = 200;//200
+            }else{
+                camera.position.z = -2400;//200
+                play_button.style.display = 'none';
+            }
+
+
+
+            // camera.up.x = 0;
+            // camera.up.y = 0;
+            // camera.up.z = 0;
+
+            // looking direction
+            camera.lookAt({
+                x : 0,
+                y : 0,
+                z : -10000
+            });
+
+            container = document.getElementById( 'container' );
+
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            container.appendChild(renderer.domElement);
+
+            // initialize point light
+            function initLight () {
+                // var sphere = new THREE.SphereGeometry(0.5, 32, 32);
+                // light1 = new THREE.PointLight( 0xffff11, 1, 500 );
+                // light1.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xffffff } ) ) );
+                // scene.add( light1 );
+                // console.log(light1);
+                // light1.position.set(0, 0, -750);
+
+                light1 = new THREE.AmbientLight( 0x404040 ); // soft white light
+                scene.add( light1 );
+            }
+
+            function render() {
+                requestAnimationFrame( render );
+                renderer.render( scene, camera );
+            }
+
+            function speedControl(sp) {
+                camera.position.z -= sp;
+            }
+
+            function drawSnow () {
+                var group = new THREE.Object3D();
+
+                geometry = new THREE.PlaneGeometry( 100, 100, 1, 1 );
+                // texture = THREE.ImageUtils.loadTexture("textures/one.png",null,function(t){});
+                // material = new THREE.MeshBasicMaterial({map:texture});
+
+                texture = new THREE.TextureLoader().load( "/static/textures/six.png");
+                material = new THREE.MeshBasicMaterial({map:texture});
+
+                // image transparent without black background
+                material.transparent = true;
+
+                mesh = new THREE.Mesh( geometry, material );
+                mesh.position.set( 0, 0, 0);
+
+                // scene.add( mesh );
+                group.add( mesh );
+
+                // clone snow flowwer
+
+                for (var i = 6; i > 0; i--) {
+
+                    var newMesh = mesh.clone();
+                    if (i === 1) {
+                        newMesh.position.set( 110, 0, 0);
+                        newMesh.rotation.z = -Math.PI / 4;
+                    } else if (i === 2) {
+                        newMesh.position.set( 75, 135, 0);
+                        newMesh.scale.x = 0.8;
+                        newMesh.scale.y = 0.8;
+                        newMesh.scale.z = 0.8;
+                        newMesh.rotation.z = Math.PI / 3;
+                    } else if (i === 3) {
+                        newMesh.position.set( -90, 120, 0);
+                        newMesh.rotation.z = Math.PI / 4;
+                    } else if (i === 4) {
+                        newMesh.position.set( 60, -105, 0);
+                        newMesh.scale.x = 0.75;
+                        newMesh.scale.y = 0.75;
+                        newMesh.scale.z = 0.75;
+                        newMesh.rotation.z = Math.PI / 6;
+                    } else if (i === 5) {
+                        newMesh.position.set( -50, -90, 0);
+                        newMesh.scale.x = 0.5;
+                        newMesh.scale.y = 0.5;
+                        newMesh.scale.z = 0.5;
+                    } else if (i === 6) {
+                        newMesh.position.set( -40, -170, 0);
+                        newMesh.scale.x = 0.8;
+                        newMesh.scale.y = 0.8;
+                        newMesh.scale.z = 0.8;
+                    }
+                    // scene.add( newMesh );
+                    group.add( newMesh	);
+
+                }
+
+                scene.add( group );
+
+            }
+
+            //draw basic rotations
+            function drawRotations() {
+                drawUpRotations();
+                drawDownRotations();
+            }
+
+
+            function drawUpRotations() {
+                geometry = new THREE.PlaneGeometry( 400, 600, 1, 1 );
+                texture = new THREE.TextureLoader().load( "/static/textures/up1.png");
+                material = new THREE.MeshBasicMaterial({map:texture});
+
+                // image transparent without black background
+                material.transparent = true;
+
+                mesh = new THREE.Mesh( geometry, material );
+                mesh.position.set( -5, 45, -485);
+                mesh.rotateZ(-Math.PI/1.2);
+                mesh.name = 'rotationUp0';
+                mesh.scale.x = 0.2;
+                mesh.scale.y = mesh.scale.x;
+                mesh.scale.z = mesh.scale.x;
+                mesh.visible = false;
+
+                scene.add( mesh );
+
+                for (var i = 1; i <= 7; i++) {
+                    var newMesh = mesh.clone();
+                    newMesh.position.set( -5, 45, -485+50*i);
+                    newMesh.name = 'rotationUp' + i;
+                    // newMesh.rotateZ(0.3);
+
+                    scene.add(newMesh);
+                    newMesh.visible = false;
+                }
+            }
+
+            function drawDownRotations() {
+                geometry = new THREE.PlaneGeometry( 400, 600, 1, 1 );
+                texture = new THREE.TextureLoader().load( "/static/textures/down1.png");
+                material = new THREE.MeshBasicMaterial({map:texture});
+
+                // image transparent without black background
+                material.transparent = true;
+
+                mesh = new THREE.Mesh( geometry, material );
+                mesh.position.set( 2, -40, -484);
+                mesh.rotateZ(-Math.PI/1.2);
+                mesh.scale.x = 0.2;
+                mesh.scale.y = mesh.scale.x;
+                mesh.scale.z = mesh.scale.x;
+
+                mesh.name = 'rotationDown0';
+                mesh.visible = false;
+
+                scene.add( mesh );
+
+                // mesh.visible = false;
+
+                for (var i = 1; i <= 7; i++) {
+                    var newMesh = mesh.clone();
+                    newMesh.position.set( 2, -40, -484+50*i);
+                    newMesh.name = 'rotationDown' + i;
+                    // newMesh.rotateZ(0.3);
+
+                    scene.add(newMesh);
+                    newMesh.visible = false;
+                }
+            }
+
+            function drawBlackHole() {
+
+                // draw a fake background
+
+                geometry = new THREE.PlaneGeometry( 30, 45, 1, 1 );
+                texture = new THREE.TextureLoader().load( "/static/textures/blackhole.png");
+                material = new THREE.MeshBasicMaterial({map:texture});
+
+                // image transparent without black background
+                material.transparent = true;
+
+                mesh = new THREE.Mesh( geometry, material );
+                mesh.position.set( 0, 0, -487);
+
+                scene.add( mesh );
+
+
+                // real background
+
+                geometry = new THREE.PlaneGeometry( 640, 1040, 1, 1 );
+                texture = new THREE.TextureLoader().load( "/static/textures/blackhole.png");
+                material = new THREE.MeshBasicMaterial({map:texture});
+
+                // image transparent without black background
+                material.transparent = true;
+
+                mesh = new THREE.Mesh( geometry, material );
+                mesh.position.set( 0, 0, -950);
+
+                scene.add( mesh );
+
+                // flying
+                for (var i = 0; i < 12; i++) {
+                    geometry = new THREE.PlaneGeometry( 20, 20, 1, 1 );
+                    texture = new THREE.TextureLoader().load( "/static/textures/flying.png");
+                    material = new THREE.MeshBasicMaterial({map:texture});
+
+                    // image transparent without black background
+                    material.transparent = true;
+
+                    mesh = new THREE.Mesh( geometry, material );
+
+                    if (i%4 == 0) {
+                        mesh.position.set( 50 * Math.random() + 50, 50 * Math.random() + 50, -950 + i * 30);
+                        mesh.rotation.z = Math.PI/-2;
+                    } else if (i%4 == 1) {
+                        mesh.position.set( 50 * Math.random() + 50, -50 * Math.random() - 50, -950 + i * 30);
+                        mesh.rotation.z = Math.PI;
+                    } else if (i%4 == 2) {
+                        mesh.position.set( -50 * Math.random() - 50, 50 * Math.random() + 50, -950 + i * 30);
+
+                    } else if (i%4 == 3) {
+                        mesh.position.set( -50 * Math.random() - 50, -50 * Math.random() - 50, -950 + i * 30);
+                        mesh.rotation.z = Math.PI /2;
+                    }
+
+                    mesh.scale.x = 3;
+                    mesh.scale.y = 3;
+                    mesh.scale.z = 3;
+                    mesh.visible = false;
+                    mesh.name = "flying" + i;
+                    scene.add( mesh );
+
+                }
+            }
+
+            function drawParticleSys() {
+                material = new THREE.PointsMaterial({
+                    color: 0xffffcc
+                });
+
+                geometry = new THREE.Geometry();
+                var x, y, z;
+                for (var i = 0; i < 1000; i++) {
+                    x = (Math.random() * 800) - 400;
+                    y = (Math.random() * 800) - 400;
+                    z = (Math.random() * 500) - 900;
+                    geometry.vertices.push(new THREE.Vector3(x, y, z));
+                }
+
+                var pointCloud = new THREE.Points(geometry, material);
+                scene.add(pointCloud);
+            }
+
+            function drawElement() {
+                // fake sun at black hole page
+                drawingPlane( 287, 287, 'fakesun', 0, 0, -945, .5 );
+
+                // board one
+                drawingPlane( 200, 350, 'greenflower', 140, 220, -1400, .7 );
+                drawingPlane( 250, 250, 'greenone', 40, -40, -1300, .8 );
+                drawingPlane( 250, 250, 'yellowone', -40, 40, -1310, .8 );
+                // drawingPlane( 640, 850, 'rightleaf', 0, -90, -1448, .70 );
+                // drawingPlane( 640, 810, 'leftleaf', 3, 130, -1447, .70 );
+                drawingPlane( 640, 1040, 'greenbackground', 0, 0, -1448, .75 );
+
+                //board two
+                // drawingPlane( 200, 350, 'cloudleft', -140, 220, -1900, .7 );
+                drawingPlane( 250, 250, 'blueone', 40, -40, -1800, .8 );
+                drawingPlane( 250, 250, 'skyone', -40, 40, -1810, .8 );
+                drawingPlane( 640, 1040, 'bluebackground2', 0, 0, -1948, .75 );
+
+                // board three
+                drawingPlane( 250, 250, 'girlone', 40, -40, -2300, .8 );
+                drawingPlane( 250, 250, 'snowmanone', -40, 40, -2310, .8 );
+                drawingPlane( 640, 1040, 'cartoonbackground', 0, 0, -2448, .75 );
+
+                // draw main background
+                drawingPlane( 600, 311, 'bottom', 0, -270, -2947, .75 );
+                drawingPlane( 170, 600, 'ac', 0, 15, -2850, .58 );
+                drawingPlane( 201, 79, 'illdesign', 0, -300, -2946, .72 );
+                drawingPlane( 640, 1040, 'fakelight', 0, -15, -2800, .48);
+                drawingPlane( 640, 1040, 'mainbackground', 0, 0, -2948, .75 );
+
+                // draw after uploading
+                drawingPlane( 168, 90, 'reupload', -110, -290, -2945, .72, true );
+                drawingPlane( 167, 86, 'confirm', 110, -290, -2944, .72, true );
+
+                // like page
+                drawingPlane( 168, 90, 'ranking', -110, -290, -2943, .72, true );
+                drawingPlane( 167, 86, 'designtoo', 110, -290, -2942, .72, true );
+                drawingPlane( 142, 142, 'likethumb', 0, -300, -2941, .72, true );
+
+            }
+
+            function drawingPlane (sizex, sizey, pngname, setx, sety, setz, scale, unvis) {
+                geometry = new THREE.PlaneGeometry( sizex, sizey, 1, 1 );
+                texture = new THREE.TextureLoader().load( "/static/textures/" + pngname + ".png" );
+                material = new THREE.MeshBasicMaterial({map:texture});
+
+                // image transparent without black background
+                material.transparent = true;
+
+                mesh = new THREE.Mesh( geometry, material );
+                mesh.position.set( setx, sety, setz);
+                mesh.scale.x = scale || 1;
+                mesh.scale.y = scale || 1;
+                mesh.scale.z = scale || 1;
+
+                mesh.name = pngname;
+
+                if (unvis) {
+                    mesh.visible = false;
+                } else {
+                    mesh.visible = true;
+                }
+                scene.add( mesh );
+            }
+
+            // watch camera position
+            function watchCamera(c) {
+                // console.log(c.z);
+                // console.log(speed);
+                if (c.z > 15) {
+                    //do nothing
+                } else if (c.z <= 15 && c.z > -485) {
+
+                    // speed up camero move
+
+                    if (c.z > -400) {
+                        speed += 0.05;
+                    } else {
+                        speed -= 0.2;
+                    }
+                    // remove first few mesh
+
+
+                    // scale and rotate the rotation up and down
+                    for (var i = 0; i <= 7; i++) {
+                        let promise = new Promise((resolve, reject) => {
+                                var res = {
+                                    a: scene.getObjectByName(('rotationUp' + i)),
+                                    b: i
+                                };
+                        resolve(res);
+                    });
+
+                        promise.then((successMessage) => {
+                            tmpObj = successMessage.a;
+                        var rat = 1- (c.z - tmpObj.position.z) / 500;
+                        tmpObj.rotation.z = -Math.PI/1.2 - successMessage.b * speed * ( rat * (-Math.PI/1.2 - Math.PI/5)) / 32;
+                        tmpObj.visible = true;
+                    });
+                    }
+
+                    for (var i = 0; i <= 7; i++) {
+                        let promise = new Promise((resolve, reject) => {
+                                var res = {
+                                    a: scene.getObjectByName(('rotationDown' + i)),
+                                    b: i
+                                };
+                        resolve(res);
+                    });
+
+                        promise.then((successMessage) => {
+                            tmpObj = successMessage.a;
+                        var rat = 1- (c.z - tmpObj.position.z) / 500;
+                        tmpObj.rotation.z = -Math.PI/1.2 - successMessage.b * speed * ( rat * (-Math.PI/1.2 - Math.PI/5)) / 40;
+                        tmpObj.visible = true;
+                    });
+                    }
+
+
+                } else if (c.z <= -485 && c.z >= -950) {
+                    // console.log(speed);
+                    speed = 2.5;//1
+
+                    for (var i = 0; i < 12; i++) {
+                        let promise = new Promise((resolve, reject) => {
+                                var res = {
+                                    a: scene.getObjectByName(('flying' + i)),
+                                    b: i
+                                };
+                        resolve(res);
+                    });
+
+                        promise.then((successMessage) => {
+                            tmpObj = successMessage.a;
+                        tmpObj.visible = true;
+                    });
+                    }
+
+                } else if (c.z < -950 && c.z >= -1451) {
+                    speed = 5;
+                } else if (c.z < -1451 && c.z >= -1951) {
+                    speed = 5;
+                } else if (c.z < -1951 && c.z >= -2451) {
+                    speed = 5;
+                } else if (c.z < -2451) {
+                    speed = 0;
+                }
+            }
+
+
+            // listen event part
+            // resize windows\
+            function onWindowResize() {
+                SCREEN_WIDTH = window.innerWidth;
+                SCREEN_HEIGHT = window.innerHeight;
+                camera.aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
+                camera.updateProjectionMatrix();
+                renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
+                controls.handleResize();
+            }
+
+            // device handleOrientation
+            function handleOrientation(event){
+                // console.log('here handle orientation');
+                // console.log(event.gamma);
+                // console.log(camera);
+                if (event.gamma > 0) {
+                    // camera.filmOffset += 0.1;
+                    if (camera.rotation.y < 0.041) camera.rotateY(.0003 * event.gamma);
+
+                    console.log('move right');
+
+                } else if (event.gamma < 0) {
+                    // camera.filmOffset -= 0.1;
+                    if (camera.rotation.y > -0.041) camera.rotateY(.0003 * event.gamma);
+                    console.log('move left');
+                }
+
+            }
+
+            // window listen event
+
+            function initListener(){
+                window.addEventListener( 'resize', onWindowResize, false );
+                window.addEventListener("deviceorientation", handleOrientation, true);
+            }
+
+
+            // initialize every shit
+            function init(){
+                initStats();
+                drawSnow();
+                drawRotations();
+                drawBlackHole();
+                drawParticleSys();
+                drawElement();
+                initLight();
+
+                render();
+                animate();
+                initListener();
+            }
+
+            init();
+
+            //@lrd
+            if(isDetail){
+                if(isMine){
+                    // my detail
+                    // disappear button
+                    scene.getObjectByName('designtoo').visible = true;
+                    scene.getObjectByName('ranking').visible = true;
+                    scene.getObjectByName('likethumb').visible = true;
+
+                    scene.getObjectByName('reupload').visible = false;
+                    scene.getObjectByName('confirm').visible = false;
+
+                    document.getElementById('like-thumb').style.display = 'block';
+                    document.getElementById('rank-button').style.display = 'block';
+                    document.getElementById('design-too').style.display = 'block';
+
+                    document.getElementById('reupload-image').style.display = 'none';
+                    document.getElementById('confirm').style.display = 'none';
+
+                }else{
+                    //others detail
+
+                    // disappear button
+                    scene.getObjectByName('designtoo').visible = true;
+                    scene.getObjectByName('ranking').visible = true;
+                    scene.getObjectByName('likethumb').visible = true;
+
+                    scene.getObjectByName('reupload').visible = false;
+                    scene.getObjectByName('confirm').visible = false;
+
+                    document.getElementById('like-thumb').style.display = 'block';
+                    document.getElementById('rank-button').style.display = 'block';
+                    document.getElementById('design-too').style.display = 'block';
+
+                    document.getElementById('reupload-image').style.display = 'none';
+                    document.getElementById('confirm').style.display = 'none';
+                }
+            }
+
+        }, false);
+    })();
+</script>
+<script src="/static/js/upload-main.js"></script>
+<script src="/static/js/three.js"></script>
+<script src="/static/js/stats.js"></script>
+<!-- 		<script src="js/GPUParticleSystem.js"></script>
+		<script src="js/libs/dat.gui.min.js"></script>
+		<script src="js/controls/DeviceOrientationControls.js"></script> -->
+</body>
+</html>

@@ -18,7 +18,8 @@
     "require": {
         "php": ">=5.4.0",
         "topthink/framework": "^5.0",
-        "overtrue/wechat": "^3.2"
+        "overtrue/wechat": "^3.2",
+        "upyun/sdk": "^2.2"
     },
     "extra": {
         "think-path": "thinkphp"
